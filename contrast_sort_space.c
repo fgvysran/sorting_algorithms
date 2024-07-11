@@ -2,7 +2,7 @@
 #include<string.h>
 #include<time.h>
 #include<stdlib.h>
-#define LOW_NUM  10000
+#define LOW_NUM  600000
 
 #define swap(a,b){\
     __typeof(a) _t=a;\
@@ -23,7 +23,6 @@
     }\
     printf("%lldms",1000*(e-f)/CLOCKS_PER_SEC);\
     printf("\n");\
-    free(temp);\
 }
 //get rand date
 int *get_rand_data(int n){
@@ -40,27 +39,42 @@ int check(int*a,int l,int r){
     }return 1;
 }
 //sort kinds
-//selection_sort
+//selection_sort------
 void selection_sort(int *arr,int l,int r);
-//insertion_sort
+//insertion_sort---------
 void insertion_sort(int *arr,int l,int r);
 void insertion_sort2(int *arr,int l,int r);
-//shell_sort 
+//shell_sort --------
 void  insert_sort_for_shell(int*arr,int l,int r,int step);
 void shell_sort(int*arr ,int l ,int  r);//1
 void shell_sort_hibbard(int*arr,int l,int r);//2
-//buble_sort
+//buble_sort--------
 void buble_sort_1(int *arr,int l,int r);
+//quick sort -------
+int  partion_sort(int*arr,int l,int r);
+void quick_sort(int*arr,int l,int r);//index include r
+void quick_sort_v2(int *arr,int l,int r);//index not include r
+int three_point_select(int a,int b,int c);
+void quick_sort_v3(int*arr ,int l,int r);
+void __quick_sort(int*arr ,int l,int r);
+void quick_sort_v4(int*arr,int l,int r);
+
+
 
 int main(){
     srand(time(0));
     int *arr=get_rand_data(LOW_NUM);
-    TEST(selection_sort,arr,LOW_NUM);
-    TEST(insertion_sort,arr,LOW_NUM);
-    TEST(insertion_sort2,arr,LOW_NUM);
+    //TEST(selection_sort,arr,LOW_NUM);
+   //TEST(insertion_sort,arr,LOW_NUM);
+    //TEST(insertion_sort2,arr,LOW_NUM);
     TEST(shell_sort,arr,LOW_NUM);
     TEST(shell_sort_hibbard,arr,LOW_NUM);
-    TEST(buble_sort_1,arr,LOW_NUM);
+    //TEST(buble_sort_1,arr,LOW_NUM);
+    TEST(quick_sort,arr,LOW_NUM-1);
+    TEST(quick_sort_v2,arr,LOW_NUM);
+    TEST(quick_sort_v3,arr,LOW_NUM);
+    TEST(quick_sort_v4,arr,LOW_NUM);
+
 
     free(arr);
     return 0;
@@ -168,5 +182,99 @@ void buble_sort_1(int *arr,int l,int r){
             } 
         }if(f==0)break;
     }
+    return ;
+}
+
+//quick_sort    index include r;
+int partion_sort(int*arr,int l,int r){
+    int x=arr[l];
+    while(l<r){
+        while( l<r && arr[r] >= x)r--;
+        if(l<r)arr[l++]=arr[r];
+        while ( l < r && arr[l] <= x )l++;
+        if(l<r)arr[r--]=arr[l];
+    }
+    arr[l]=x;
+    return l; 
+}
+
+void quick_sort(int*arr,int l,int r){
+    if(l<r){
+        int mid=partion_sort(arr,l,r);
+        quick_sort(arr,l,mid-1);
+        quick_sort(arr,mid+1,r);
+    }
+    return ;
+}
+//2.0 quick_sort    index not include r
+void quick_sort_v2(int *arr,int l,int r){
+    if(r-l<=2){
+        if(r-l<=1)return;
+        if(arr[l] > arr[l+1])swap(arr[l],arr[l+1]);
+        return;
+    }
+    int x=l,y=r-1,t=arr[l];
+    do{
+        while(arr[x] < t)x++;
+        while(arr[y] > t)y--;
+        if(x<=y){
+            swap(arr[x],arr[y]);
+            x++;y--;
+            }
+    }while(x<=y);
+    quick_sort_v2(arr,l,y+1);
+    quick_sort_v2(arr,x,r);
+    return ;
+}
+//quick_sort_v3 
+int three_point_select(int a,int b,int c){
+    if(a>b)swap(a,b);
+    if(a>c)swap(b,c);
+    if(b>c)swap(b,c);
+    return b;
+}
+void quick_sort_v3(int*arr ,int l,int r){
+    if(r-l<=2){
+        if(r-l<=1)return;
+        if(arr[l] > arr[l+1])swap(arr[l],arr[l+1]);
+        return;
+    }
+    while(l<r){
+    int x=l,y=r-1,t=three_point_select(arr[l],arr[(l+r)/2],arr[r-1]);
+    do{
+         while(arr[x] < t)x++;
+         while(arr[y] > t)y--;
+        if(x<=y){
+            swap(arr[x],arr[y]);
+            x++;y--;
+        }
+    }while(x<=y);
+    quick_sort_v3(arr,l,y+1);
+    l=x;
+    }    
+    return ;
+}
+
+//insert_sort combined quick_sort  16
+void __quick_sort(int*arr ,int l,int r){
+    while(r-l > 16 ){
+    int x=l,y=r-1,t=three_point_select(arr[l],arr[(l+r)/2],arr[r-1]);
+    do{
+         while(arr[x] < t)x++;
+         while(arr[y] > t)y--;
+        if(x<=y){
+            swap(arr[x],arr[y]);
+            x++;y--;
+        }
+    }while(x<=y);
+    __quick_sort(arr,l,y+1);
+    l=x;
+    }    
+    return ;
+}
+
+void quick_sort_v4(int*arr,int l,int r){
+    __quick_sort(arr,l,r);
+    insertion_sort2(arr,l,r);
     return ;
 }

@@ -1,0 +1,111 @@
+//quick_sort    index include r;
+int partion_sort(int*arr,int l,int r){
+    int x=arr[l];
+    while(l<r){
+        while( l<r && arr[r] >= x)r--;
+        if(l<r)arr[l++]=arr[r];
+        while ( l < r && arr[l] <= x )l++;
+        if(l<r)arr[r--]=arr[l];
+    }
+    arr[l]=x;
+    return l; 
+}
+
+void quick_sort(int*arr,int l,int r){
+    if(l<r){
+        int mid=partion_sort(arr,l,r);
+        quick_sort(arr,l,mid-1);
+        quick_sort(arr,mid+1,r);
+    }
+    return ;
+}
+/////////////////////////////////////////////////////2. index not include r(bellow (under): all);
+void quick_sort_v2(int *arr,int l,int r){
+    if(r-l<=2){
+        if(r-l<=1)return;
+        if(arr[l] > arr[l+1])swap(arr[l],arr[l+1]);
+        return;
+    }
+    int x=l,y=r-1,t=arr[l];
+    do{
+        while(arr[x] < t)x++;
+        while(arr[y] > t)y--;
+        if(x<=y){
+            swap(arr[x],arr[y]);
+            x++;y--;
+            }
+    }while(x<=y);
+    quick_sort_v2(arr,l,y+1);
+    quick_sort_v2(arr,x,r);
+    return ;
+}
+
+///////////////////////////////////////////
+int three_point_select(int a,int b,int c){
+    if(a>b)swap(a,b);
+    if(a>c)swap(b,c);
+    if(b>c)swap(b,c);
+    return b;
+}
+void quick_sort_v3(int*arr ,int l,int r){
+    if(r-l<=2){
+        if(r-l<=1)return;
+        if(arr[l] > arr[l+1])swap(arr[l],arr[l+1]);
+        return;
+    } 
+    while(l<r){
+    int x=l,y=r-1,t=three_point_select(arr[l],arr[(l+r)/2],arr[r-1]);
+    do{
+         while(arr[x] < t)x++;
+         while(arr[y] > t)y--;
+        if(x<=y){
+            swap(arr[x],arr[y]);
+            x++;y--;
+        }
+    }while(x<=y);
+    quick_sort_v3(arr,l,y+1);
+    l=x;
+    }    
+    return ;
+}
+///////////////////////////////////////////////////////////////
+//insert_sort combined quick_sort  16
+void __quick_sort(int*arr ,int l,int r){
+    while(r-l > 16 ){
+    int x=l,y=r-1,t=three_point_select(arr[l],arr[(l+r)/2],arr[r-1]);
+    do{
+         while(arr[x] < t)x++;
+         while(arr[y] > t)y--;
+        if(x<=y){
+            swap(arr[x],arr[y]);
+            x++;y--;
+        }
+    }while(x<=y);
+    __quick_sort(arr,l,y+1);
+    l=x;
+    }    
+    return ;
+}
+
+void quick_sort_v4(int*arr,int l,int r){
+    __quick_sort(arr,l,r);
+    insertion_sort2(arr,l,r);
+    return ;
+}
+void insertion_sort2(int *arr,int l,int r){
+    //find min
+    int min=l;
+    for(int i=l;i<r;i++){
+        if(arr[i]<arr[min])min=i;
+    }
+    swap(arr[min],arr[0]);
+    for(int i=l+1;i<r;i++){
+        int t=arr[i];
+        int j=i-1;
+        while(arr[j]>t){
+            arr[j+1]=arr[j];j--;
+        }
+        arr[j+1]=t;
+    }
+    return;
+}

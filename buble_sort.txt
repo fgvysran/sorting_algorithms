@@ -1,0 +1,10 @@
+void buble_sort_1(int *arr,int l,int r){
+    for(int i=l;i<r-1;i++){
+        for(int j=1;j<r-i;j++){
+            if(arr[j]<arr[j-1]){
+                swap(arr[j-1],arr[j]);
+            }
+        }
+    }
+    return ;
+}

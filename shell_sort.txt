@@ -1,0 +1,43 @@
+void  insert_sort_for_shell(int*arr,int l,int r,int step){
+    int min=l;
+    //find min
+    for(int i=l+step;i<r;i+=step){
+          if(arr[min] > arr[i])min=i;
+    }
+    swap(arr[l],arr[min]);
+    for(int i=l+2*step;i<r;i+=step){
+        int t=arr[i];
+        int j=i-step;
+        while(arr[j] > t){
+            arr[j+step]=arr[j];
+            j-=step;
+        }
+        arr[j+step]=t;
+    }
+    return ;
+}
+
+void shell_sort(int*arr ,int l ,int  r){
+    int n=(r-l);int step;int k=2;
+    do{
+        step=(n/k)==0? 1 : n/k;
+        for(int i=l,I=l+step;i<I;i++){
+              insert_sort_for_shell(arr,i,r,step);
+        }
+       k=k*2;
+    }while(step!=1);
+    return ;
+}
+
+void shell_sort_hibbard(int*arr,int l,int r){
+    int n=(r-l);int step=1;
+    for(;step<=n/2;step=step*2+1);
+    do{
+        step/=2;
+        for(int i=l,I=l+step;i<I;i++){
+            insert_sort_for_shell(arr,i,r,step);
+        }
+    }while(step>1);
+    return;
+}
+

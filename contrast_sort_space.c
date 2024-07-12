@@ -58,11 +58,20 @@ int three_point_select(int a,int b,int c);
 void quick_sort_v3(int*arr ,int l,int r);
 void __quick_sort(int*arr ,int l,int r);
 void quick_sort_v4(int*arr,int l,int r);
+//merge sort------extra space
+int *buff;
+void merge_sort(int*arr ,int l, int r);
+//radix--sort
+#define K 65536   //2 * 16 
+void radix_sort(int*arr ,int l, int r);
 
+void heap_sort(int*arr,int l,int r);
+void down_date(int*arr,int index,int n);
 
 
 int main(){
     srand(time(0));
+    buff=(int*)malloc(sizeof(int)*LOW_NUM);
     int *arr=get_rand_data(LOW_NUM);
     //TEST(selection_sort,arr,LOW_NUM);
    //TEST(insertion_sort,arr,LOW_NUM);
@@ -74,6 +83,9 @@ int main(){
     TEST(quick_sort_v2,arr,LOW_NUM);
     TEST(quick_sort_v3,arr,LOW_NUM);
     TEST(quick_sort_v4,arr,LOW_NUM);
+    TEST(merge_sort,arr,LOW_NUM);
+    TEST(radix_sort,arr,LOW_NUM);
+    TEST(heap_sort,arr,LOW_NUM);
 
 
     free(arr);
@@ -277,4 +289,65 @@ void quick_sort_v4(int*arr,int l,int r){
     __quick_sort(arr,l,r);
     insertion_sort2(arr,l,r);
     return ;
+}
+
+//merge_sort   extra space
+void merge_sort(int*arr ,int l, int r){
+    if(r-l<=1)return ;
+    int mid=(l+r)/2;
+    merge_sort(arr,l,mid);
+    merge_sort(arr,mid,r);
+    int p1=l,p2=mid;int k=0;
+    while(p1 < mid || p2 <r){
+        if(p2==r || (arr[p2] >= arr[p1] && p1 < mid))buff[k++]=arr[p1++];
+        else{
+              buff[k++]=arr[p2++];
+        }
+    }
+    for(int i=0;i<k;i++)arr[l+i]=buff[i];
+    return;
+}
+//radix---sort
+void radix_sort(int*arr ,int l, int r){
+    int *cnt=(int *)malloc(sizeof(int)*K) ;
+    int *temp=(int *)malloc(sizeof(int)*(r-l));
+    //round 1
+    memset(cnt,0,sizeof(int)*K);   //init
+    for(int i=l;i<r;i++)cnt[arr[i]%K]++;
+    for(int i=1;i<K;i++)cnt[i]+=cnt[i-1]; 
+    for(int i=r-1;i>=l;i--)temp[--cnt[arr[i]%K]]=arr[i];
+    memcpy(arr+l,temp,sizeof(int)*(r-l));
+    //round 2
+    memset(cnt,0,sizeof(int)*K);     //init
+    for(int i=l;i<r;i++)cnt[arr[i]/K]++;
+    for(int i=1;i<K;i++)cnt[i]+=cnt[i-1];
+    for(int i=r-1;i>=l;i--)temp[--cnt[arr[i]/K]]=arr[i];
+    memcpy(arr,temp,sizeof(int)*(r-l));
+    return;
+}
+//heap sort
+void down_date(int*arr,int index,int n){
+    #define    Lchilde(i) (i*2+1)
+    #define   Rchild(i) (i*2+2)
+    
+    while(index<n){
+        int max=index;int l=Lchilde(index),r=Rchild(index);
+        if(l<n && arr[max] < arr[l])max=l;
+        if(r<n && arr[max] < arr[r])max=r;
+        if(max==index)return;
+        swap(arr[max],arr[index]);
+        index=max;
+    }
+}
+void heap_sort(int*arr,int l,int r){
+    int n=r-l;int t=n/2-1;
+    while(t>=0){
+         down_date(arr,t,n);
+         t--;
+    }
+    for(int i=r-1;i>0;i--){
+        swap(arr[i],arr[l]);
+        down_date(arr,l,i);
+    }
+    return;
 }

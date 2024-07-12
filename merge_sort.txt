@@ -1,0 +1,17 @@
+//merge_sort   extra space
+int *buff=(int*)malloc(sizeof(int)*arr_size);
+void merge_sort(int*arr ,int l, int r){
+    if(r-l<=1)return ;
+    int mid=(l+r)/2;
+    merge_sort(arr,l,mid);
+    merge_sort(arr,mid,r);
+    int p1=l,p2=mid;int k=0;
+    while(p1 < mid || p2 <r){
+        if(p2==r || (arr[p2] >= arr[p1] && p1 < mid))buff[k++]=arr[p1++];
+        else{
+              buff[k++]=arr[p2++];
+        }
+    }
+    for(int i=0;i<k;i++)arr[l+i]=buff[i];
+    return;
+}
